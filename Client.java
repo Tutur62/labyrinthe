@@ -30,7 +30,7 @@ public class Client{
 	    
 	    String numJoueur = bf.readLine();
 
-	    //System.out.println("Numero de joueur : "+numJoueur);
+	    System.out.println("Numero de joueur : "+numJoueur);
 			
 	    while(!fin){
 		String msg = bf.readLine();
@@ -52,12 +52,12 @@ public class Client{
 			Labyrinthe laby = new Labyrinthe(msg);
 			
 			Joueur joueur = new Joueur();
-			String Impasse = new String();
+
 			//Création du tableau
 			int tLaby[][] = new int[laby.getTailleX()][laby.getTailleY()];
 
 		    //Informations sur le joueur
-		    //System.out.println("Je me trouve en : ("+laby.getJoueur(Integer.parseInt(numJoueur)).getPosX()+","+laby.getJoueur(Integer.parseInt(numJoueur)).getPosY()+")");
+		    System.out.println("Je me trouve en : ("+laby.getJoueur(Integer.parseInt(numJoueur)).getPosX()+","+laby.getJoueur(Integer.parseInt(numJoueur)).getPosY()+")");
 		    ArrayList<Integer> infosMoule = new ArrayList<Integer>();
 		    //Parcours du plateau pour trouver toutes les moules et leur valeur
 		    for(int j=0;j<laby.getTailleY();j++)
@@ -67,8 +67,8 @@ public class Client{
 			    }
 
 		    //Affichage des informations sur les moules du plateau
-		   // for(int i=0;i<infosMoule.size()/3;i++)
-			//System.out.println("Moule en ("+infosMoule.get(i*3)+","+infosMoule.get(i*3+1)+") pour "+infosMoule.get(i*3+2)+" points");
+		    for(int i=0;i<infosMoule.size()/3;i++)
+			System.out.println("Moule en ("+infosMoule.get(i*3)+","+infosMoule.get(i*3+1)+") pour "+infosMoule.get(i*3+2)+" points");
 
 		    //Je prépare le message suivant à envoyer au serveur : je vais me déplacer vers l'Est.
 		    //Pourquoi ? Aucune idée mais faut bien envoyer quelque chose au serveur alors pourquoi pas ?
@@ -87,136 +87,48 @@ public class Client{
 					}
 				}
 
-/*
+
 			for(int i = 0; i < laby.getTailleY(); i++){
 				for(int j = 0; j < laby.getTailleX(); j++){
 					System.out.print(tLaby[j][i]);
 				}
 				System.out.println();
 			}
-*/
-			//Conditions de déplacement mode normale
+
+			//Conditions de déplacement
 			//Vers à l'Est
-			System.out.println("check1");
-			if(
-			tLaby[laby.getJoueur(Integer.parseInt(numJoueur)).getPosX()+1] 
-			[laby.getJoueur(Integer.parseInt(numJoueur)).getPosY()] != 1 &&
-			tLaby[laby.getJoueur(Integer.parseInt(numJoueur)).getPosX()-1] 
-			[laby.getJoueur(Integer.parseInt(numJoueur)).getPosY()] != 1
-			||
-			tLaby[laby.getJoueur(Integer.parseInt(numJoueur)).getPosX()+1] 
-			[laby.getJoueur(Integer.parseInt(numJoueur)).getPosY()] != 1  &&
-			tLaby[laby.getJoueur(Integer.parseInt(numJoueur)).getPosX()] 
-			[laby.getJoueur(Integer.parseInt(numJoueur)).getPosY()-1] != 1
-			||
-			tLaby[laby.getJoueur(Integer.parseInt(numJoueur)).getPosX()+1] 
-			[laby.getJoueur(Integer.parseInt(numJoueur)).getPosY()] != 1 &&
-			tLaby[laby.getJoueur(Integer.parseInt(numJoueur)).getPosX()] 
-			[laby.getJoueur(Integer.parseInt(numJoueur)).getPosY()+1] != 1
-			||
-			tLaby[laby.getJoueur(Integer.parseInt(numJoueur)).getPosX()-1] 
-			[laby.getJoueur(Integer.parseInt(numJoueur)).getPosY()] != 1  &&
-			tLaby[laby.getJoueur(Integer.parseInt(numJoueur)).getPosX()] 
-			[laby.getJoueur(Integer.parseInt(numJoueur)).getPosY()-1] != 1
-			||
-			tLaby[laby.getJoueur(Integer.parseInt(numJoueur)).getPosX()-1] 
-			[laby.getJoueur(Integer.parseInt(numJoueur)).getPosY()] != 1  &&
-			tLaby[laby.getJoueur(Integer.parseInt(numJoueur)).getPosX()] 
-			[laby.getJoueur(Integer.parseInt(numJoueur)).getPosY()+1] != 1
-			||
-			tLaby[laby.getJoueur(Integer.parseInt(numJoueur)).getPosX()-1] 
-			[laby.getJoueur(Integer.parseInt(numJoueur)).getPosY()] == 1  &&
-			tLaby[laby.getJoueur(Integer.parseInt(numJoueur)).getPosX()] 
-			[laby.getJoueur(Integer.parseInt(numJoueur)).getPosY()+1] == 1){
-			System.out.println("check2");
-			//Vers l'Est
 			if(tLaby[laby.getJoueur(Integer.parseInt(numJoueur)).getPosX()+1] 
 			[laby.getJoueur(Integer.parseInt(numJoueur)).getPosY()] == 0){
 				msg = "E";
-				//System.out.println("droite");
-			
+				System.out.println("droite");
+			}else{
 				//Vers le Sud
 				if(tLaby[laby.getJoueur(Integer.parseInt(numJoueur)).getPosX()]
 				[laby.getJoueur(Integer.parseInt(numJoueur)).getPosY()-1] == 0){
 					msg = "N";
-					//System.out.println("haut");
+					System.out.println("haut");
 				}else{
 					//Vers le Nord
 					if(tLaby[laby.getJoueur(Integer.parseInt(numJoueur)).getPosX()]
 					[laby.getJoueur(Integer.parseInt(numJoueur)).getPosY()+1] == 0){
 						msg = "S";
-						//System.out.println("bas");
+						System.out.println("bas");
 					}else{
 						//Vers l'Ouest
 						if(tLaby[laby.getJoueur(Integer.parseInt(numJoueur)).getPosX()-1]
 						[laby.getJoueur(Integer.parseInt(numJoueur)).getPosY()] == 0){
 							msg = "O";
-							//System.out.println("gauche");
+							System.out.println("gauche");
 						}
 					}
 				}
 			}
+			if(tLaby[laby.getJoueur(Integer.parseInt(numJoueur)).getPosX()+1] 
+			[laby.getJoueur(Integer.parseInt(numJoueur)).getPosY()] == 1 &&tLaby[laby.getJoueur(Integer.parseInt(numJoueur)).getPosX()-1] 
+			[laby.getJoueur(Integer.parseInt(numJoueur)).getPosY()] == 1){
+				msg = "S";
+				System.out.println("bas");
 			}
-			else{
-			if
-			(tLaby[laby.getJoueur(Integer.parseInt(numJoueur)).getPosX()+1] 
-			[laby.getJoueur(Integer.parseInt(numJoueur)).getPosY()] == 1&&
-			tLaby[laby.getJoueur(Integer.parseInt(numJoueur)).getPosX()] 
-			[laby.getJoueur(Integer.parseInt(numJoueur)).getPosY()-1] == 1&&
-			tLaby[laby.getJoueur(Integer.parseInt(numJoueur)).getPosX()-1] 
-			[laby.getJoueur(Integer.parseInt(numJoueur)).getPosY()] == 1)
-			{
-			Impasse="haut";
-			}
-			//Impasse vers le bas
-					if
-			(tLaby[laby.getJoueur(Integer.parseInt(numJoueur)).getPosX()+1] 
-			[laby.getJoueur(Integer.parseInt(numJoueur)).getPosY()] == 1&&
-			tLaby[laby.getJoueur(Integer.parseInt(numJoueur)).getPosX()] 
-			[laby.getJoueur(Integer.parseInt(numJoueur)).getPosY()+1] == 1&&
-			tLaby[laby.getJoueur(Integer.parseInt(numJoueur)).getPosX()-1] 
-			[laby.getJoueur(Integer.parseInt(numJoueur)).getPosY()] == 1)
-			{
-			Impasse="bas";
-			}
-			//Impasse vers la droite
-					if
-			(tLaby[laby.getJoueur(Integer.parseInt(numJoueur)).getPosX()] 
-			[laby.getJoueur(Integer.parseInt(numJoueur)).getPosY()+1] == 1&&
-			tLaby[laby.getJoueur(Integer.parseInt(numJoueur)).getPosX()+1] 
-			[laby.getJoueur(Integer.parseInt(numJoueur)).getPosY()] == 1&&
-			tLaby[laby.getJoueur(Integer.parseInt(numJoueur)).getPosX()] 
-			[laby.getJoueur(Integer.parseInt(numJoueur)).getPosY()-1] == 1)
-			{
-			Impasse="droite";
-			}
-			//Impasse vers la gauche
-					if
-			(tLaby[laby.getJoueur(Integer.parseInt(numJoueur)).getPosX()+1] 
-			[laby.getJoueur(Integer.parseInt(numJoueur)).getPosY()] == 1&&
-			tLaby[laby.getJoueur(Integer.parseInt(numJoueur)).getPosX()] 
-			[laby.getJoueur(Integer.parseInt(numJoueur)).getPosY()+1] == 1&&
-			tLaby[laby.getJoueur(Integer.parseInt(numJoueur)).getPosX()-1] 
-			[laby.getJoueur(Integer.parseInt(numJoueur)).getPosY()] == 1)
-			{
-			Impasse="gauche";
-			}
-			//Mode sortie Impasse
-			if(Impasse=="haut"){
-				msg="S";
-			}
-			if(Impasse=="bas"){
-				msg="N";
-			}
-			if(Impasse=="droite"){
-				msg="O";
-			}
-			if(Impasse=="gauche"){
-				msg="E";
-			}
-			System.out.println("check3");
-			}
-			System.out.println(Impasse);
 			/*-----------------------------------------------------------------------*/
 		    
 		    //Envoi du message au serveur.
