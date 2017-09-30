@@ -5,10 +5,6 @@ class Labyrinthe{
     private int tailleX, tailleY;
     private Case tableau[];
     private ArrayList<Joueur> listeJoueur;
-    private long seedCreationLaby;
-    private Random randCreationLaby;
-    private long seedPlacementBonus;
-    private Random randPlacementBonus;
 
     public Labyrinthe(){
 	tailleX=3;
@@ -17,46 +13,7 @@ class Labyrinthe{
 	for(int i=0;i<tailleX*tailleY;i++)
 	    tableau[i]=new Case();
 	tableau[4].setType("SABLE");
-	seedCreationLaby=0;
-	randCreationLaby = new Random(seedCreationLaby);
 	listeJoueur=new ArrayList<Joueur>();
-    }
-
-    public Labyrinthe(int ttailleX, int ttailleY){
-	this(ttailleX,ttailleY,(long)(Math.random()*65535),(long)(Math.random()*65535));
-    }
-
-    public Labyrinthe(int ttailleX, int ttailleY, long sseedCreationLaby, long sseedPlacementBonus){
-	if(ttailleX<7)
-	    throw new java.lang.RuntimeException("Constructeur Labyrinthe prenant taille en param\n-->tailleX < 0 ou trop faible");
-	if(ttailleY<7)
-	    throw new java.lang.RuntimeException("Constructeur Labyrinthe prenant taille en param\n-->tailleY < 0ou trop faible");
-	if(ttailleX%2==0)
-	    throw new java.lang.RuntimeException("Classe Labyrinthe constructeur 2 entiers\n-->tailleX ne doit pas être pair");
-	if(ttailleY%2==0)
-	    throw new java.lang.RuntimeException("Classe Labyrinthe constructeur 2 entiers\n-->tailleY ne doit pas être pair");
-	tailleX=ttailleX;
-	tailleY=ttailleY;
-	tableau = new Case[tailleX*tailleY];
-	for(int i=0;i<tailleX*tailleY;i++)
-	    tableau[i]=new Case();
-
-	for(int i=1;i<tailleX;i+=2)
-	    for(int j=1;j<tailleY;j+=2)
-		getXY(i,j).setType(Case.SABLE);
-
-	seedCreationLaby=sseedCreationLaby;
-	randCreationLaby = new Random(seedCreationLaby);
-
-	seedPlacementBonus=sseedPlacementBonus;
-	randPlacementBonus = new Random(seedPlacementBonus);
-
-	genereLabyrinthe();
-	listeJoueur=new ArrayList<Joueur>();
-    }
-
-    public Labyrinthe(int ttailleX, int ttailleY, String infos){
-	this(ttailleX+"x"+ttailleY+"/"+infos);
     }
 
     public Labyrinthe(String infos){
@@ -81,10 +38,6 @@ class Labyrinthe{
 	    System.exit(0);
 	}
 	
-	seedCreationLaby=0;
-	randCreationLaby = new Random(seedCreationLaby);
-	seedPlacementBonus=0;
-	randPlacementBonus = new Random(seedPlacementBonus);
 	
 	String[] infosLaby = tailleInfos[1].split("-");
 	if(infosLaby.length!=tailleX*tailleY){
@@ -136,14 +89,6 @@ class Labyrinthe{
     public Labyrinthe(Labyrinthe la){
 	tailleX=la.tailleX;
 	tailleY=la.tailleY;
-	seedCreationLaby=la.seedCreationLaby;
-	seedPlacementBonus=la.seedPlacementBonus;
-	// randCreationLaby = new Random(randCreationLaby);
-	// TODO - Voir si ca pose probleme
-	randCreationLaby = new Random(seedCreationLaby);
-	// randPlacementBonus = new Random(randPlacementBonus);
-	// TODO - Voir si ca pose probleme
-	randPlacementBonus = new Random(seedPlacementBonus);
 	listeJoueur=new ArrayList<Joueur>();
 	for(int i=0;i<la.listeJoueur.size();i++)
 	    listeJoueur.add(new Joueur(la.listeJoueur.get(i)));
@@ -173,97 +118,7 @@ class Labyrinthe{
 	return listeJoueur.get(n);
     }
 
-    // Cette méthode ne doit être appelée qu'après avoir créé un labyrinthe de base par le constructeur prenant 2 entiers en paramètres - donc un labyrinthe composé seulement de dunes mais avec des zones de sable toutes les 2 cases.
-    private void genereLabyrinthe(){
-	// Méthode qui utilise randCreationLaby instancié dans les constructeurs
-	ArrayList<Integer> murX = new ArrayList<Integer>();
-	ArrayList<Integer> murY = new ArrayList<Integer>();
-
-	for(int i=1;i<tailleX-1;i++)
-	    for(int j=1;j<tailleY-1;j++)
-		if(((i+j)%2)==1){
-		    murX.add(i);
-		    murY.add(j);
-		}
-
-	// On crée un tableau temporaire contenant les codes qui seront fusionnés par la suite.
-	// voir wikipédia
-	// On initialise les codes à 0 pour les cases contenant des dunes, à -1 pour les autres
-	int tableauFlag[] = new int[tableau.length];
-	for(int i=0;i<tableauFlag.length;i++)
-	    if(tableau[i].getType()==Case.DUNE)
-		tableauFlag[i]=0;
-	    else
-		tableauFlag[i]=-1;
-
-	// On modifie les -1 par un indice permettant de numéroter toutes les cases n'étant pas des dunes.
-	int indice=0;
-	for(int i=0;i<tableauFlag.length;i++)
-	    if(tableauFlag[i]==-1)
-		tableauFlag[i]=indice++;
-	
-	
-	while(!finGeneration(tableauFlag)){
-	    // Prendre un mur aléatoirement
-	    int numCase = randCreationLaby.nextInt(murX.size());
-	    // Le supprimer de la liste
-	    int posMurX=murX.get(numCase);
-	    int posMurY=murY.get(numCase);
-	    murX.remove(numCase);
-	    murY.remove(numCase);
-	    
-	    // Vérifier si c'est un mur qui connecte deux chemins haut/bas ou droite/gauche
-	    boolean droiteGauche=((posMurX%2)==0);
-	    
-	    // Fusionner les zones en changeant tableauFlag
-	    int indiceA, indiceB;
-	    if(droiteGauche){
-		indiceA=tableauFlag[posMurY*tailleX+posMurX-1];
-		indiceB=tableauFlag[posMurY*tailleX+posMurX+1];
-	    }else{
-		indiceA=tableauFlag[(posMurY-1)*tailleX+posMurX];
-		indiceB=tableauFlag[(posMurY+1)*tailleX+posMurX];
-	    }
-	    // Avant de fusionner, on vérifie bien qu'on essaie de casser un mur qu'on peut casser
-	    // qui ne reliera pas 2 zones ayant le même indice
-	    if(indiceA!=indiceB){
-		tableauFlag[posMurY*tailleX+posMurX]=fusionnerZone(tableauFlag,indiceA,indiceB);
-		tableau[posMurY*tailleX+posMurX].setType(Case.SABLE);
-	    }
-	    
-	}
-	int nbDunes=0;
-	for(int i=1;i<tailleX-1;i++)
-	    for(int j=1;j<tailleY-1;j++)
-		    if(getXY(i,j).getType()==Case.DUNE)
-		nbDunes++;
-	//System.out.println("Il y a "+nbDunes+" murs sur "+(tailleX-2)*(tailleY-2)+" cases soit un pourcentage de : "+(nbDunes*1.0)/((tailleX-2)*(tailleY-2))*100.0);
-    }
-
-    private boolean finGeneration(int tableauFlag[]){
-	for(int i=1;i<tableauFlag.length;i++)
-	    if(tableauFlag[i]!=tableauFlag[0])
-		return false;
-	return true;
-    }
-
-    private int fusionnerZone(int tableauFlag[], int indiceA, int indiceB){
-	int min=indiceA;
-	int max=indiceB;
-
-	if(min>max){
-	    min=indiceB;
-	    max=indiceA;
-	}
-	
-	for(int i=0;i<tableauFlag.length;i++)
-	    if(tableauFlag[i]==max)
-		tableauFlag[i]=min;
-
-	return min;
-    }
-
-    public void ajouterJoueur(int posJoueurX, int posJoueurY){
+    /*public void ajouterJoueur(int posJoueurX, int posJoueurY){
 	ajouterJoueur(posJoueurX,posJoueurY, "J"+listeJoueur.size());
     }
 
@@ -349,21 +204,21 @@ class Labyrinthe{
 	    tableau[liste.get(indiceAlea)].setType(Case.SABLE);
 	    liste.remove(indiceAlea);
 	}	
-    }
+	}*/
 
     public int getIndex(int x, int y){
 	return y*tailleX+x;
     }
 
-    private int retrouverJoueur(String nom){
+    /*private int retrouverJoueur(String nom){
 	for(int i=0;i<listeJoueur.size();i++)
 	    if(nom.equals(listeJoueur.get(i).getNom()))
 		return i;
 	System.out.println("Le joueur "+nom+" n'existe pas");
 	return -1;
-    }
+	}*/
     
-    private boolean directionValide(char c){
+    /*private boolean directionValide(char c){
 	return ((c=='N') || (c=='S') || (c=='E') || (c=='O'));
     }
 
@@ -488,7 +343,7 @@ class Labyrinthe{
 
 	return "";
     
-    }
+	}*/
 
     public String toString(){
 	String retour=tailleX+"x"+tailleY+"/";
@@ -517,10 +372,10 @@ class Labyrinthe{
 	return retour;
     }
 
-    public static void main(String[] args){
+    /*public static void main(String[] args){
 	Labyrinthe l = new Labyrinthe(Integer.parseInt(args[0]),Integer.parseInt(args[1]));
 	l.ajouterJoueur(1,1);
 	System.out.println(l);
-    }
+	}*/
 		      
 }
